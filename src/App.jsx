@@ -1,4 +1,4 @@
-import { ErrorMessage } from './Components/ErrorMessage.jsx'
+import { useState, useEffect } from 'react'
 import { ImageGalery } from './Components/ImageGalery.jsx'
 import { ImageModal } from './Components/ImageModal.jsx'
 import { Loader } from './Components/Loader.jsx'
@@ -8,6 +8,11 @@ import { fetchSearchPhoto } from './api/api_gallery.js'
 import toast, { Toaster } from 'react-hot-toast';
 import './App.css'
 
+const ErrorMessage =(error)=>{
+  return      (<div>
+                      <h1>{error.error.message}</h1>
+               </div>)
+}
 
 const notify = () => toast.error("Phrase is too short!");
 
