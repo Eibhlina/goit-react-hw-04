@@ -1,3 +1,5 @@
-export default function ErrorMessage() {
-  return <h2>Oops! Something went wrong. Please try again later.</h2>;
+export const ErrorMessage =(error)=>{
+    return      (<div>
+                        <h1>{error.error.message}</h1>
+                 </div>)
 }

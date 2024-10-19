@@ -1,86 +1,90 @@
-import { useEffect, useState } from "react";
-import "./App.css";
-import ErrorMessage from "./components/ErrorMessage";
-import Loader from "./components/Loader";
-import LoadMoreBtn from "./components/LoadMoreBtn";
-import PhotoModal from "./components/PhotoModal";
-import PhotosGallery from "./components/PhotosGallery";
-import SearchBar from "./components/SearchBar";
-import { useGetPhotos } from "./hooks/useGetPhotos";
-import Modal from "react-modal";
+import { ErrorMessage } from './Components/ErrorMessage'
+import { ImageGalery } from './Components/ImageGalery'
+import { ImageModal } from './Components/ImageModal'
+import { Loader } from './Components/Loader'
+import { LoadModeBtn } from './Components/LoadModeBtn'
+import { SearchBar } from './Components/SearchBar'
+import { fetchSearchPhoto } from './api/api_gallery'
+import { useEffect, useState } from 'react'
+import toast, { Toaster } from 'react-hot-toast';
+import './App.css'
 
-Modal.setAppElement("#root");
+
+const notify = () => toast.error("Phrase is too short!");
 
 function App() {
-  const { isLoading, error, photosList, getPhotos } = useGetPhotos();
-  const [keyWord, setKeyWord] = useState("");
-  const [page, setPage] = useState(1);
-  const [selectedPhoto, setSelectedPhoto] = useState(null);
-  const [modalIsOpen, setIsOpen] = useState(false);
+  const [searchPhase, setSearchPhase]=useState("")
+  const [isLoading, setIsLoading]=useState(false)
+  const [error, setError]=useState(false)
+  const [gallery, setgallery]=useState([])
+  const [curentPage, setCurentPage]=useState(1)
+  const [selectedImage, setSelectedImage]=useState()
+  const [modalIsOpen, setModalIsOpene]=useState(false)
 
-  useEffect(() => {
-    if (keyWord) {
-      getPhotos(keyWord, page);
-    } else {
-      getPhotos("", page);
+  const handleSearch = (phase)=>{
+    if(phase.trim()=="") {
+       return notify()
     }
-  }, [keyWord, page]);
-
-  const handleSearchSubmit = (query) => {
-    setPage(1);
-    console.log("Search query:", query);
-    setKeyWord(query, 1);
-  };
-
-  const handleLoadMore = () => {
-    setPage((prevPage) => prevPage + 1);
-    const scrollPosition = window.scrollY; // nie działa to scrollowanie, jest niestety rerender komponentu
-    setTimeout(() => {
-      window.scrollTo({ top: scrollPosition, behavior: "smooth" });
-    }, 0);
-  };
-
-  //---modal
-
-  const openModal = (photo) => {
-    setSelectedPhoto(photo);
-    setIsOpen(true);
-  };
-
-  function afterOpenModal() {
-    // Działania po otwarciu modala
+    setgallery([])
+    setSearchPhase(phase)
+    setCurentPage(1)
+  }
+  const handleLoadMore = ()=>{
+    setCurentPage( 1 + curentPage )
+  }
+  const handleClickImage = (clicedImage)=>{
+    setSelectedImage(clicedImage)
+    setModalIsOpene(true)
+  }
+  const handleColoseModal = ()=>{
+    setModalIsOpene(false)
   }
 
-  function closeModal() {
-    setIsOpen(false);
-    setSelectedPhoto(null);
-  }
-  //---
+  useEffect(()=>{
+  },[selectedImage])
 
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  if (error) {
-    return <ErrorMessage />;
-  }
+  useEffect(()=>{
+    const getPhoto = async () => {
+      try{
+        setError(false)
+        setIsLoading(true);
+        const galleryItems = await fetchSearchPhoto(searchPhase, curentPage)
+        setgallery([...gallery,...galleryItems])
+        setError(false)
+      }catch(error){
+        setgallery({})
+        setError(error)
+      }finally{
+        setIsLoading(false);
+      }
+    };
+    if(searchPhase.trim()!="") getPhoto()
+  },[searchPhase,curentPage])
 
   return (
     <>
-      <SearchBar onSubmit={handleSearchSubmit} />
-      <PhotosGallery photos={photosList} openModal={openModal} />
-      <LoadMoreBtn onLoadMore={handleLoadMore} currentPage={page} />
-      <PhotoModal
-        openModal={openModal}
-        closeModal={closeModal}
-        afterOpenModal={afterOpenModal}
-        modalIsOpen={modalIsOpen}
-        photos={photosList}
-        getPhotos={getPhotos}
-        selectedPhoto={selectedPhoto}
+      <Toaster />
+      <SearchBar
+      handleSearch={handleSearch}/>
+      {searchPhase.trim()!="" ? gallery.length == 0 && <h2>Result not found! </h2> : false}
+      {gallery.length > 0 && <ImageGalery
+                              gallery={gallery}
+                              handleClickImage={handleClickImage}/>}
+      {isLoading && <Loader/>}
+      {error && <ErrorMessage
+                 error={error}
+                />}
+      {gallery.length > 0 && <LoadModeBtn
+                              handleLoadMore={handleLoadMore}
+                            />}
+      <ImageModal
+       modalIsOpen={modalIsOpen}
+       selectedImage={selectedImage}
+       handleColoseModal={handleColoseModal}
+
       />
     </>
-  );
+  )
 }
 
-export default App;
+export default App
