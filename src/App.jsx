@@ -3,7 +3,7 @@ import { ImageGalery } from './Components/ImageGalery.jsx'
 import { ImageModal } from './Components/ImageModal.jsx'
 
 import { LoadModeBtn } from './Components/LoadModeBtn.jsx'
-import { SearchBar } from './Components/SearchBar.jsx'
+
 import { fetchSearchPhoto } from './api/api_gallery.js'
 import toast, { Toaster } from 'react-hot-toast';
 import './App.css'
@@ -27,6 +27,31 @@ const ErrorMessage =(error)=>{
   return      (<div>
                       <h1>{error.error.message}</h1>
                </div>)
+}
+
+import {Field, Form, Formik} from "formik"
+
+export const SearchBar =({handleSearch})=>{
+    return      (<div>
+        <Formik 
+        initialValues={{search:""}}
+        onSubmit={
+            (values, actions)=>{
+                handleSearch(values.search)
+                actions.resetForm()
+        }}>
+          <Form>
+            <Field 
+            type="text" 
+            name="search"
+            autoComplete="off"
+            autoFocus
+            placeholder="Search..."
+            />
+            <button type="submit">Search</button>
+          </Form>
+        </Formik>
+     </div>)
 }
 
 const notify = () => toast.error("Phrase is too short!");
