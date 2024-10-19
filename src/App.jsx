@@ -1,12 +1,27 @@
 import { useState, useEffect } from 'react'
 import { ImageGalery } from './Components/ImageGalery.jsx'
 import { ImageModal } from './Components/ImageModal.jsx'
-import { Loader } from './Components/Loader.jsx'
+
 import { LoadModeBtn } from './Components/LoadModeBtn.jsx'
 import { SearchBar } from './Components/SearchBar.jsx'
 import { fetchSearchPhoto } from './api/api_gallery.js'
 import toast, { Toaster } from 'react-hot-toast';
 import './App.css'
+
+import { Blocks } from 'react-loader-spinner'
+export const Loader =()=>{
+    return      (<div className='loader'>
+                        <Blocks
+                                height="80"
+                                width="80"
+                                color="#4fa94d"
+                                ariaLabel="blocks-loading"
+                                wrapperStyle={{}}
+                                wrapperClass="blocks-wrapper"
+                                visible={true}
+                        />
+                 </div>)
+}
 
 const ErrorMessage =(error)=>{
   return      (<div>
