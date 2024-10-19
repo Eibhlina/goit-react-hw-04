@@ -1,11 +1,10 @@
-import { ErrorMessage } from './Components/ErrorMessage'
-import { ImageGalery } from './Components/ImageGalery'
-import { ImageModal } from './Components/ImageModal'
-import { Loader } from './Components/Loader'
-import { LoadModeBtn } from './Components/LoadModeBtn'
-import { SearchBar } from './Components/SearchBar'
-import { fetchSearchPhoto } from './api/api_gallery'
-import { useEffect, useState } from 'react'
+import { ErrorMessage } from './Components/ErrorMessage.jsx'
+import { ImageGalery } from './Components/ImageGalery.jsx'
+import { ImageModal } from './Components/ImageModal.jsx'
+import { Loader } from './Components/Loader.jsx'
+import { LoadModeBtn } from './Components/LoadModeBtn.jsx'
+import { SearchBar } from './Components/SearchBar.jsx'
+import { fetchSearchPhoto } from './api/api_gallery.js'
 import toast, { Toaster } from 'react-hot-toast';
 import './App.css'
 
